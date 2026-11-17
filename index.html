@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muse Video Prompt Library</title>
+    <style>
+        /* CSS Dasar & Tema Gelap */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --accent: #bb86fc;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { text-align: center; color: var(--accent); }
+        
+        /* Galeri Grid */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(187, 134, 252, 0.2);
+        }
+        .card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 2px solid var(--accent);
+        }
+        .card-content { padding: 15px; }
+        .card-title { font-size: 1.1em; margin: 0 0 10px 0; }
+        .card-category { font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; }
+
+        /* Modal / Pop-up Pengaturan */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: var(--accent); font-weight: bold;}
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            background: #2c2c2c;
+            color: white;
+            border: 1px solid #444;
+            font-size: 1em;
+        }
+        
+        /* Hasil Prompt */
+        .prompt-result {
+            background: #000;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            font-family: monospace;
+            color: #a8ffb2;
+            margin-top: 15px;
+            line-height: 1.5;
+        }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1em;
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.8; }
+        .btn-copy { background: var(--accent); color: #000; flex: 1; }
+        .btn-close { background: #444; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>Muse Prompt Gallery</h1>
+    
+    <!-- Galeri akan diisi oleh JavaScript -->
+    <div class="gallery" id="gallery-container"></div>
+
+    <!-- Modal Pengaturan -->
+    <div class="modal-overlay" id="promptModal">
+        <div class="modal-content">
+            <h2 id="modal-title">Atur Prompt Anda</h2>
+            
+            <div class="form-group">
+                <label for="select-product">Jenis Produk:</label>
+                <select id="select-product" onchange="updatePrompt()">
+                    <option value="tas kulit mewah">Tas Kulit Mewah</option>
+                    <option value="sepatu sneakers modern">Sepatu Sneakers</option>
+                    <option value="jam tangan elegan">Jam Tangan</option>
+                    <option value="botol parfum kaca">Botol Parfum</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="select-camera">Gerakan Kamera:</label>
+                <select id="select-camera" onchange="updatePrompt()">
+                    <option value="slow panning shot">Slow Panning</option>
+                    <option value="360-degree orbit">Orbit 360 Derajat</option>
+                    <option value="fast zoom in">Fast Zoom In</option>
+                    <option value="cinematic dolly track">Cinematic Dolly</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="select-lighting">Pencahayaan (Lighting):</label>
+                <select id="select-lighting" onchange="updatePrompt()">
+                    <option value="studio lighting with soft shadows">Studio Soft Shadow</option>
+                    <option value="neon cyberpunk lighting">Neon Cyberpunk</option>
+                    <option value="warm golden hour sunlight">Golden Hour (Outdoor)</option>
+                    <option value="dramatic chiaroscuro lighting">Dramatis Kontras Tinggi</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="select-action">Aksi / Lingkungan:</label>
+                <select id="select-action" onchange="updatePrompt()">
+                    <option value="floating gracefully in mid-air">Melayang di Udara</option>
+                    <option value="rotating slowly on a turntable">Berputar di Atas Meja</option>
+                    <option value="water splashing around it">Efek Cipratan Air</option>
+                    <option value="used by a stylish model walking">Digunakan oleh Model</option>
+                </select>
+            </div>
+
+            <div class="prompt-result" id="final-prompt">
+                Prompt akan muncul di sini...
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-copy" onclick="copyPrompt()">Copy Prompt</button>
+                <button class="btn-close" onclick="closeModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. DATABASE PROMPT (Nanti Anda bisa menambah banyak di sini)
+        const promptsData = [
+            {
+                id: 1,
+                title: "Luxury Bag Showcase",
+                category: "Fashion",
+                // Gunakan link gambar asli Anda nanti
+                image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop", 
+                basePrompt: "A highly detailed video of a [PRODUCT], [ACTION], shot with a [CAMERA] in [LIGHTING]. Ultra-realistic, 8k resolution, Muse AI style."
+            },
+            {
+                id: 2,
+                title: "Urban Sneaker Drop",
+                category: "Footwear",
+                image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=600&auto=format&fit=crop",
+                basePrompt: "A commercial video of [PRODUCT], [ACTION], [CAMERA], [LIGHTING]. Crisp details, hyper-realistic textures."
+            },
+            {
+                id: 3,
+                title: "Elegant Watch Macro",
+                category: "Accessories",
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop",
+                basePrompt: "Macro shot of [PRODUCT], [ACTION], [CAMERA], [LIGHTING]. Shallow depth of field, photorealistic."
+            }
+        ];
+
+        let currentPromptTemplate = "";
+
+        // 2. RENDER GALERI
+        const galleryContainer = document.getElementById('gallery-container');
+        
+        promptsData.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.onclick = () => openModal(item);
+            card.innerHTML = `
+                <img src="${item.image}" alt="${item.title}">
+                <div class="card-content">
+                    <h3 class="card-title">${item.title}</h3>
+                    <span class="card-category">${item.category}</span>
+                </div>
+            `;
+            galleryContainer.appendChild(card);
+        });
+
+        // 3. LOGIKA MODAL & GENERATOR PROMPT
+        const modal = document.getElementById('promptModal');
+        const modalTitle = document.getElementById('modal-title');
+        const finalPromptDiv = document.getElementById('final-prompt');
+
+        function openModal(promptData) {
+            modal.style.display = 'flex';
+            modalTitle.innerText = promptData.title;
+            currentPromptTemplate = promptData.basePrompt;
+            updatePrompt(); // Langsung generate prompt saat dibuka
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+        }
+
+        function updatePrompt() {
+            // Ambil nilai dari dropdown
+            const product = document.getElementById('select-product').value;
+            const camera = document.getElementById('select-camera').value;
+            const lighting = document.getElementById('select-lighting').value;
+            const action = document.getElementById('select-action').value;
+
+            // Ganti placeholder di template dengan pilihan user
+            let generatedPrompt = currentPromptTemplate
+                .replace('[PRODUCT]', product)
+                .replace('[CAMERA]', camera)
+                .replace('[LIGHTING]', lighting)
+                .replace('[ACTION]', action);
+
+            finalPromptDiv.innerText = generatedPrompt;
+        }
+
+        // 4. FITUR COPY TEXT
+        function copyPrompt() {
+            const textToCopy = finalPromptDiv.innerText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const btn = document.querySelector('.btn-copy');
+                const originalText = btn.innerText;
+                btn.innerText = 'Berhasil Dicopy!';
+                btn.style.background = '#a8ffb2';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = 'var(--accent)';
+                }, 2000);
+            });
+        }
+
+        // Tutup modal jika klik di luar area modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
