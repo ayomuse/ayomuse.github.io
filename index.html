@@ -27,17 +27,17 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- HERO SECTION (Rata Tengah) --- */
+        /* --- HERO SECTION --- */
         .hero {
             text-align: center;
-            padding: 60px 20px 40px;
+            padding: 60px 20px 30px;
             max-width: 800px;
             margin: 0 auto;
         }
 
         .hero-badge {
             display: inline-block;
-            background: #E8F5E9; /* Warna hijau lembut untuk sukses/beli */
+            background: #E8F5E9;
             color: #2E7D32;
             padding: 8px 20px;
             border-radius: 20px;
@@ -63,29 +63,60 @@
             margin: 0 auto;
         }
 
-        /* --- GALLERY GRID (Kolom) --- */
+        /* --- NAVIGASI KATEGORI --- */
+        .category-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 20px 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-btn:hover {
+            background: #EBEBEB;
+            color: var(--text-main);
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* --- GALLERY GRID --- */
         .gallery-container {
             max-width: 1100px;
             margin: 0 auto;
             padding: 0 20px 80px;
             display: grid;
-            grid-template-columns: 1fr; /* Mobile: 1 Kolom */
+            grid-template-columns: 1fr;
             gap: 30px;
         }
 
         @media (min-width: 768px) {
-            .gallery-container {
-                grid-template-columns: repeat(2, 1fr); /* Tablet: 2 Kolom */
-            }
+            .gallery-container { grid-template-columns: repeat(2, 1fr); }
         }
 
         @media (min-width: 1024px) {
-            .gallery-container {
-                grid-template-columns: repeat(3, 1fr); /* Desktop: 3 Kolom */
-            }
+            .gallery-container { grid-template-columns: repeat(3, 1fr); }
         }
 
-        /* Kartu Konten */
+        /* --- KARTU KONTEN --- */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -96,41 +127,40 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
-        /* Video Player */
-        .video-container {
+        .media-container {
             width: 100%;
             position: relative;
             background: #000;
-            aspect-ratio: 16/9; /* Standar video landscape */
+            aspect-ratio: 4/3; /* Rasio lebih pas untuk foto/video produk */
         }
 
-        .video-container video {
+        .media-container img, 
+        .media-container video {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
         }
 
+        .type-badge {
+            position: absolute;
+            top: 12px; right: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+        }
+
         .card-body {
             padding: 24px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
             flex: 1;
-        }
-
-        .card-header {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .card-category {
-            font-size: 0.75em;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
         .card-title {
@@ -139,28 +169,72 @@
             color: var(--text-main);
         }
 
-        /* Kotak Prompt */
-        .prompt-box {
-            background: var(--code-bg);
+        /* --- ACCORDION PROMPT --- */
+        .accordion-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-color);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 16px;
-            position: relative;
-            flex: 1;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-main);
+            transition: background 0.2s;
         }
 
-        .prompt-text {
+        .accordion-btn:hover { background: #EBEBEB; }
+        
+        .accordion-btn .icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-btn.open .icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--code-bg);
+            border-radius: 0 0 8px 8px;
+            margin-top: -4px; /* Menyambung dengan tombol */
+            border: 1px solid transparent;
+        }
+        
+        .accordion-content.open {
+            max-height: 500px; /* Cukup tinggi untuk menampung textarea */
+            border-color: var(--border);
+        }
+
+        .prompt-wrapper {
+            padding: 16px;
+        }
+
+        .prompt-textarea {
+            width: 100%;
+            height: 120px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             font-family: 'SFMono-Regular', Consolas, monospace;
             font-size: 0.85em;
             line-height: 1.5;
             color: #333;
-            margin-bottom: 16px;
-            flex: 1;
+            resize: vertical;
+            background: var(--surface);
+            margin-bottom: 12px;
         }
 
-        /* Tombol Salin */
+        .prompt-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
         .btn-copy {
             width: 100%;
             padding: 12px;
@@ -179,7 +253,8 @@
         }
 
         .btn-copy:hover { background: #333; }
-        .btn-copy.copied { background: #10B981; } /* Warna hijau saat berhasil */
+        .btn-copy.copied { background: #10B981; }
+
     </style>
 </head>
 <body>
@@ -187,32 +262,38 @@
     <!-- HERO SECTION -->
     <header class="hero">
         <span class="hero-badge">Thanks for your purchase</span>
-        <h1>Premium Muse Video Prompts</h1>
-        <p>Terima kasih telah berlangganan. Di bawah ini adalah kumpulan prompt eksklusif yang sudah teruji. Silakan salin kode dan gunakan di akun Muse AI Anda.</p>
+        <h1>Premium Muse Prompts</h1>
+        <p>Terima kasih telah berlangganan. Silakan pilih kategori, buka prompt, edit jika perlu, dan salin untuk digunakan di akun Muse AI Anda.</p>
     </header>
+
+    <!-- NAVIGASI KATEGORI -->
+    <nav class="category-nav" id="category-nav">
+        <!-- Tombol navigasi akan di-generate oleh JS -->
+    </nav>
 
     <!-- GRID KONTEN -->
     <main class="gallery-container" id="gallery-container">
-        <!-- Kartu akan diisi oleh JavaScript -->
+        <!-- Kartu akan diisi oleh JS -->
     </main>
 
     <script>
-        // DATA PROMPT & VIDEO
-        // GANTI 'videoUrl' dengan link video MP4 Anda, dan 'poster' dengan gambar thumbnail video
+        // DATA PROMPT & MEDIA
         const promptsData = [
             {
                 id: 1,
-                title: "Luxury Bag Showcase",
+                title: "Luxury Leather Bag",
                 category: "Fashion & Apparel",
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // GANTI DENGAN LINK VIDEO ANDA
-                poster: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop", // GANTI DENGAN THUMBNAIL VIDEO
+                type: "video", // Tipe: video atau image
+                mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+                poster: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop",
                 prompt: "Create this image into a high-end commercial video of a luxury leather bag. The bag is floating gracefully in mid-air, captured with a slow panning shot using studio lighting with soft shadows. Ultra-realistic, 8k resolution, fashion campaign style."
             },
             {
                 id: 2,
                 title: "Sneaker Unboxing POV",
                 category: "Unboxing",
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // GANTI DENGAN LINK VIDEO ANDA
+                type: "video",
+                mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
                 poster: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=800&auto=format&fit=crop",
                 prompt: "Create this image into a POV unboxing video. First-person perspective hands opening a premium box revealing modern sneakers. The sneakers are slowly rising from the box, cinematic dolly track, warm golden hour sunlight. Crisp details, ASMR aesthetic."
             },
@@ -220,54 +301,104 @@
                 id: 3,
                 title: "Elegant Watch Macro",
                 category: "Cinematic Detail",
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // GANTI DENGAN LINK VIDEO ANDA
-                poster: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
-                prompt: "Create this image into a cinematic macro video of an elegant watch. The subject is rotating slowly to catch the light, captured with a macro close-up and dramatic chiaroscuro lighting. Shallow depth of field, photorealistic, anamorphic lens flare."
+                type: "image",
+                mediaUrl: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=800&auto=format&fit=crop",
+                prompt: "A hyper-realistic product photography of an elegant watch resting on a dark textured surface. Macro shot, dramatic chiaroscuro lighting, shallow depth of field, metallic reflections, 8k resolution, photorealistic."
             },
             {
                 id: 4,
                 title: "Tech Gadget Dynamic",
-                category: "Technology",
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // GANTI DENGAN LINK VIDEO ANDA
-                poster: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
-                prompt: "Create this image into a dynamic tech commercial. The smartphone is exploding into pieces and reassembling, shot with a 360-degree orbit under neon cyberpunk lighting. Futuristic vibe, glowing accents, 4k."
+                category: "Product Photo",
+                type: "image",
+                mediaUrl: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop",
+                prompt: "A dynamic product photo of a modern smartphone floating in mid-air. Neon cyberpunk lighting, glowing accents, dark studio background, 4k resolution, futuristic vibe, highly detailed."
             },
             {
                 id: 5,
                 title: "Cosmetic Bottle Glow",
                 category: "Beauty & Skincare",
-                videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4", // GANTI DENGAN LINK VIDEO ANDA
+                type: "video",
+                mediaUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
                 poster: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop",
                 prompt: "Create this image into a luxurious beauty commercial. A cosmetic bottle is surrounded by floating water droplets, shot with a slow panning shot using studio lighting with soft shadows. Dewy skin texture, glowing particles, 8k."
+            },
+            {
+                id: 6,
+                title: "Minimalist Chair",
+                category: "Product Photo",
+                type: "image",
+                mediaUrl: "https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=800&auto=format&fit=crop",
+                prompt: "A minimalist product photo of a designer wooden chair. Clean white studio background, soft natural sunlight casting soft shadows, architectural aesthetic, sharp focus, 8k."
             }
         ];
 
+        let activeCategory = "Semua";
+        const navContainer = document.getElementById('category-nav');
         const galleryContainer = document.getElementById('gallery-container');
 
-        // FUNGSI RENDER KARTU
+        // 1. RENDER NAVIGASI KATEGORI
+        function renderNav() {
+            // Ambil semua kategori unik dari data
+            const categories = ["Semua", ...new Set(promptsData.map(item => item.category))];
+            
+            navContainer.innerHTML = '';
+            categories.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = `nav-btn ${cat === activeCategory ? 'active' : ''}`;
+                btn.innerText = cat;
+                btn.onclick = () => {
+                    activeCategory = cat;
+                    renderNav(); // Update status tombol aktif
+                    renderGallery(); // Filter galeri
+                };
+                navContainer.appendChild(btn);
+            });
+        }
+
+        // 2. RENDER GALERI
         function renderGallery() {
             galleryContainer.innerHTML = '';
             
-            promptsData.forEach(item => {
+            // Filter data berdasarkan kategori yang dipilih
+            const filteredData = activeCategory === "Semua" 
+                ? promptsData 
+                : promptsData.filter(item => item.category === activeCategory);
+
+            filteredData.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 
+                // Tentukan elemen media (Video atau Gambar)
+                let mediaHTML = '';
+                if (item.type === 'video') {
+                    mediaHTML = `<video src="${item.mediaUrl}" poster="${item.poster}" controls preload="none"></video>`;
+                } else {
+                    mediaHTML = `<img src="${item.mediaUrl}" alt="${item.title}">`;
+                }
+
                 card.innerHTML = `
-                    <div class="video-container">
-                        <!-- Tag video tanpa autoplay, menggunakan poster/thumbnail -->
-                        <video src="${item.videoUrl}" poster="${item.poster}" controls preload="none"></video>
+                    <div class="media-container">
+                        ${mediaHTML}
+                        <span class="type-badge">${item.type.toUpperCase()}</span>
                     </div>
                     <div class="card-body">
-                        <div class="card-header">
-                            <span class="card-category">${item.category}</span>
-                            <div class="card-title">${item.title}</div>
-                        </div>
-                        <div class="prompt-box">
-                            <div class="prompt-text" id="prompt-${item.id}">${item.prompt}</div>
-                            <button class="btn-copy" onclick="copyText(${item.id}, this)">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                Salin Prompt
-                            </button>
+                        <div class="card-title">${item.title}</div>
+                        
+                        <!-- Accordion Toggle -->
+                        <button class="accordion-btn" onclick="toggleAccordion(${item.id}, this)">
+                            <span>Lihat & Edit Prompt</span>
+                            <svg class="icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        
+                        <!-- Accordion Content (Textarea) -->
+                        <div class="accordion-content" id="accordion-${item.id}">
+                            <div class="prompt-wrapper">
+                                <textarea class="prompt-textarea" id="prompt-${item.id}">${item.prompt}</textarea>
+                                <button class="btn-copy" onclick="copyText(${item.id}, this)">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    Salin Prompt
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -276,30 +407,37 @@
             });
         }
 
-        // FUNGSI SALIN TEKS
+        // 3. LOGIKA ACCORDION (BUKA/TUTUP)
+        function toggleAccordion(id, btnElement) {
+            const content = document.getElementById(`accordion-${id}`);
+            
+            // Toggle class 'open' untuk animasi buka-tutup
+            btnElement.classList.toggle('open');
+            content.classList.toggle('open');
+        }
+
+        // 4. LOGIKA SALIN (Mengambil dari Textarea yang sudah diedit)
         function copyText(id, btnElement) {
-            // Ambil teks berdasarkan ID unik dari prompt
-            const textToCopy = document.getElementById(`prompt-${id}`).innerText;
+            const textarea = document.getElementById(`prompt-${id}`);
+            const textToCopy = textarea.value; // Mengambil nilai dari textarea (termasuk jika diedit)
             
             navigator.clipboard.writeText(textToCopy).then(() => {
-                // Simpan teks asli tombol
                 const originalHTML = btnElement.innerHTML;
                 
-                // Ubah status tombol
                 btnElement.classList.add('copied');
-                btnElement.innerHTML = '✅ Berhasil Disalin!';
+                btnElement.innerHTML = 'Berhasil Disalin!';
                 
-                // Kembalikan ke bentuk semula setelah 2 detik
                 setTimeout(() => {
                     btnElement.classList.remove('copied');
                     btnElement.innerHTML = originalHTML;
                 }, 2000);
             }).catch(err => {
-                alert('Gagal menyalin teks. Silakan salin secara manual.');
+                alert('Gagal menyalin teks. Silakan blok teks dan salin secara manual.');
             });
         }
 
-        // Jalankan render saat halaman dimuat
+        // Inisialisasi awal
+        renderNav();
         renderGallery();
     </script>
 </body>
