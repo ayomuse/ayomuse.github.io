@@ -3,382 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muse Prompt Library</title>
+    <title>Muse Prompt Generator</title>
     <style>
-        /* CSS Dasar & Tema Gelap */
+        /* Desain Minimalis & Premium */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap');
+
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #ffffff;
-            --text-muted: #a0a0a0;
-            --accent: #bb86fc;
+            --bg-color: #F7F7F8;
+            --surface: #FFFFFF;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --border: #E5E5E5;
+            --accent: #000000;
+            --accent-hover: #333333;
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 30px;}
-
-        /* Menu Kategori */
-        .category-menu {
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
+            align-items: center;
+            padding: 40px 20px;
         }
-        .cat-btn {
-            background: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid #333;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .cat-btn.active, .cat-btn:hover {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-            font-weight: bold;
-        }
-        
-        /* Galeri Grid */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(187, 134, 252, 0.2);
-        }
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--accent);
-        }
-        .card-content { padding: 15px; }
-        .card-title { font-size: 1.1em; margin: 0 0 5px 0; }
-        .card-category { font-size: 0.8em; color: var(--accent); font-weight: bold; text-transform: uppercase; }
 
-        /* Modal / Pop-up Pengaturan */
-        .modal-overlay {
+        /* Container Utama (Split Layout) */
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        @media (min-width: 900px) {
+            .container {
+                flex-direction: row;
+                align-items: center;
+                gap: 60px;
+            }
+        }
+
+        /* Sisi Kiri: Gambar */
+        .image-section {
+            flex: 1;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.08);
+            background-color: var(--surface);
+            aspect-ratio: 4/5;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .image-section:hover img {
+            transform: scale(1.03);
+        }
+
+        .upload-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .upload-overlay:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+
+        .upload-overlay input[type="file"] {
             display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
+        }
+
+        /* Sisi Kanan: Konten & Prompt */
+        .content-section {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8em;
+            line-height: 1.1;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Pengaturan Minimalis */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .setting-item label {
+            display: block;
+            font-size: 0.8em;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background-color: var(--surface);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9em;
+            color: var(--text-main);
+            appearance: none;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        /* Kotak Prompt */
+        .prompt-box {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+        }
+
+        .prompt-text {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: var(--text-main);
+            white-space: pre-wrap;
+        }
+
+        /* Tombol Copy */
+        .btn-copy {
+            margin-top: 20px;
+            width: 100%;
+            padding: 16px;
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1em;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 650px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; color: var(--accent); font-weight: bold;}
-        .form-group select, .form-group input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border-radius: 6px;
-            background: #2c2c2c;
-            color: white;
-            border: 1px solid #444;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-        
-        /* Preview Upload */
-        .upload-preview {
-            margin-top: 10px;
-            max-width: 100%;
-            height: 150px;
-            border-radius: 6px;
-            border: 1px dashed var(--accent);
-            display: none;
-            object-fit: contain;
-            background: #000;
+            gap: 8px;
         }
 
-        /* Hasil Prompt */
-        .prompt-result {
-            background: #000;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #333;
-            font-family: monospace;
-            color: #a8ffb2;
-            margin-top: 15px;
-            line-height: 1.5;
-            font-size: 0.95em;
+        .btn-copy:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
-        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: opacity 0.2s;
+
+        .btn-copy:active {
+            transform: translateY(0);
         }
-        button:hover { opacity: 0.8; }
-        .btn-copy { background: var(--accent); color: #000; flex: 1; }
-        .btn-close { background: #444; color: white; }
+
+        .btn-copy.copied {
+            background-color: #10B981; /* Green color for success */
+        }
     </style>
 </head>
 <body>
 
-    <h1>Muse Prompt Library</h1>
-    
-    <!-- Menu Kategori -->
-    <div class="category-menu" id="category-menu"></div>
-
-    <!-- Galeri -->
-    <div class="gallery" id="gallery-container"></div>
-
-    <!-- Modal Pengaturan -->
-    <div class="modal-overlay" id="promptModal">
-        <div class="modal-content">
-            <h2 id="modal-title">Atur Prompt Anda</h2>
+    <div class="container">
+        <!-- Sisi Kiri: Visual -->
+        <div class="image-section">
+            <!-- Gambar default (bisa diganti dengan gambar Muse Anda) -->
+            <img id="display-image" src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=800&auto=format&fit=crop" alt="Product Reference">
             
-            <!-- UPLOAD GAMBAR -->
-            <div class="form-group" style="background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #444;">
-                <label for="image-upload">📸 Upload Gambar Produk Anda (Hanya Preview):</label>
+            <!-- Area Upload User -->
+            <label class="upload-overlay" for="image-upload">
+                📸 Klik untuk gunakan foto produk Anda
                 <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
-                <img id="image-preview" class="upload-preview" alt="Preview">
-                <small style="color: var(--text-muted); display: block; margin-top: 5px;">*Gunakan gambar ini sebagai referensi di Muse AI</small>
+            </label>
+        </div>
+
+        <!-- Sisi Kanan: Teks & Kontrol -->
+        <div class="content-section">
+            <div>
+                <span class="badge">Product Photography</span>
+                <h1 style="margin-top: 8px;">Luxury Leather Bag</h1>
             </div>
 
-            <div class="form-group">
-                <label for="select-product">Jenis Produk:</label>
-                <select id="select-product" onchange="updatePrompt()">
-                    <option value="a luxury leather bag">Tas Kulit Mewah</option>
-                    <option value="modern sneakers">Sepatu Sneakers</option>
-                    <option value="an elegant watch">Jam Tangan Elegan</option>
-                    <option value="a glass perfume bottle">Botol Parfum</option>
-                    <option value="a tech gadget">Gadget/Teknologi</option>
-                </select>
+            <!-- Pengaturan Sederhana -->
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label>Gerakan Kamera</label>
+                    <select id="select-camera" onchange="updatePrompt()">
+                        <option value="a slow panning shot">Slow Panning</option>
+                        <option value="a 360-degree orbit">Orbit 360 Derajat</option>
+                        <option value="a cinematic dolly track">Cinematic Dolly</option>
+                        <option value="a macro close-up">Macro Close-up</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>Pencahayaan</label>
+                    <select id="select-lighting" onchange="updatePrompt()">
+                        <option value="studio lighting with soft shadows">Studio Soft</option>
+                        <option value="warm golden hour sunlight">Golden Hour</option>
+                        <option value="neon cyberpunk lighting">Neon Cyberpunk</option>
+                        <option value="dramatic chiaroscuro lighting">Dramatis</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label for="select-camera">Gerakan Kamera:</label>
-                <select id="select-camera" onchange="updatePrompt()">
-                    <option value="a slow panning shot">Slow Panning</option>
-                    <option value="a 360-degree orbit">Orbit 360 Derajat</option>
-                    <option value="a fast zoom in">Fast Zoom In</option>
-                    <option value="a cinematic dolly track">Cinematic Dolly</option>
-                    <option value="a macro close-up">Macro Close-up</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="select-lighting">Pencahayaan (Lighting):</label>
-                <select id="select-lighting" onchange="updatePrompt()">
-                    <option value="studio lighting with soft shadows">Studio Soft Shadow</option>
-                    <option value="neon cyberpunk lighting">Neon Cyberpunk</option>
-                    <option value="warm golden hour sunlight">Golden Hour (Outdoor)</option>
-                    <option value="dramatic chiaroscuro lighting">Dramatis Kontras Tinggi</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="select-action">Aksi / Lingkungan:</label>
-                <select id="select-action" onchange="updatePrompt()">
-                    <option value="floating gracefully in mid-air">Melayang di Udara</option>
-                    <option value="rotating slowly on a turntable">Berputar di Atas Meja</option>
-                    <option value="water splashing around it">Efek Cipratan Air</option>
-                    <option value="held by a stylish model">Dipegang oleh Model</option>
-                    <option value="exploding into pieces and reassembling">Efek Explode/Reassemble</option>
-                </select>
-            </div>
-
-            <div class="prompt-result" id="final-prompt">
-                Prompt akan muncul di sini...
-            </div>
-
-            <div class="btn-group">
-                <button class="btn-copy" onclick="copyPrompt()">Copy Prompt</button>
-                <button class="btn-close" onclick="closeModal()">Tutup</button>
+            <!-- Area Prompt -->
+            <div class="prompt-box">
+                <div class="prompt-text" id="final-prompt">
+                    Memuat prompt...
+                </div>
+                <button class="btn-copy" onclick="copyPrompt()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    Copy Prompt
+                </button>
             </div>
         </div>
     </div>
 
     <script>
-        // 1. DATABASE PROMPT BERDASARKAN KATEGORI
-        const promptsData = [
-            {
-                id: 1,
-                title: "Luxury Bag Studio Shot",
-                category: "Foto Produk",
-                image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop", 
-                // Prompt dasar yang mengacu pada gambar
-                basePrompt: "Create this image into a high-end commercial video of [PRODUCT], [ACTION]. Shot with [CAMERA] using [LIGHTING]. Ultra-realistic, 8k resolution, fashion campaign style."
-            },
-            {
-                id: 2,
-                title: "Urban Sneaker Unboxing",
-                category: "Unboxing",
-                image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=600&auto=format&fit=crop",
-                // Prompt khusus unboxing
-                basePrompt: "Create this image into a POV unboxing video. First-person perspective hands opening a premium box revealing [PRODUCT]. The product is [ACTION], [CAMERA], [LIGHTING]. Crisp details, ASMR aesthetic."
-            },
-            {
-                id: 3,
-                title: "Watch Cinematic Macro",
-                category: "Cinematic",
-                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop",
-                basePrompt: "Create this image into a cinematic macro video of [PRODUCT]. The subject is [ACTION], captured with [CAMERA] and [LIGHTING]. Shallow depth of field, photorealistic, anamorphic lens flare."
-            },
-            {
-                id: 4,
-                title: "Tech Gadget Dynamic",
-                category: "Foto Produk",
-                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600&auto=format&fit=crop",
-                basePrompt: "Create this image into a dynamic tech commercial. [PRODUCT] is [ACTION], shot with [CAMERA] under [LIGHTING]. Futuristic vibe, glowing accents, 4k."
-            }
-        ];
-
-        let currentPromptTemplate = "";
-
-        // 2. LOGIKA FILTER KATEGORI
-        const categoryMenu = document.getElementById('category-menu');
-        const galleryContainer = document.getElementById('gallery-container');
+        // Template Prompt Dasar (Ganti sesuai kebutuhan Anda)
+        const basePrompt = "Create this image into a high-end commercial video of a luxury leather bag. The bag is [ACTION], captured with [CAMERA] using [LIGHTING]. Ultra-realistic, 8k resolution, fashion campaign style.";
         
-        // Ambil semua kategori unik
-        const categories = ["Semua", ...new Set(promptsData.map(p => p.category))];
-        
-        // Render tombol kategori
-        categories.forEach((cat, index) => {
-            const btn = document.createElement('button');
-            btn.className = `cat-btn ${index === 0 ? 'active' : ''}`;
-            btn.innerText = cat;
-            btn.onclick = () => filterGallery(cat, btn);
-            categoryMenu.appendChild(btn);
-        });
+        // Opsi Aksi (bisa Anda tambah atau ubah)
+        const actionText = "floating gracefully in mid-air";
 
-        function filterGallery(category, btnElement) {
-            // Ubah status aktif tombol
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btnElement.classList.add('active');
+        function updatePrompt() {
+            const camera = document.getElementById('select-camera').value;
+            const lighting = document.getElementById('select-lighting').value;
 
-            // Filter data
-            const filteredData = category === "Semua" ? promptsData : promptsData.filter(p => p.category === category);
-            renderGallery(filteredData);
+            // Mengganti placeholder dengan pilihan user
+            let generatedPrompt = basePrompt
+                .replace('[CAMERA]', camera)
+                .replace('[LIGHTING]', lighting)
+                .replace('[ACTION]', actionText);
+
+            document.getElementById('final-prompt').innerText = generatedPrompt;
         }
 
-        // 3. RENDER GALERI
-        function renderGallery(data) {
-            galleryContainer.innerHTML = ''; // Kosongkan galeri dulu
-            data.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.onclick = () => openModal(item);
-                card.innerHTML = `
-                    <img src="${item.image}" alt="${item.title}">
-                    <div class="card-content">
-                        <h3 class="card-title">${item.title}</h3>
-                        <span class="card-category">${item.category}</span>
-                    </div>
-                `;
-                galleryContainer.appendChild(card);
-            });
-        }
-
-        // Render awal (Semua)
-        renderGallery(promptsData);
-
-        // 4. LOGIKA MODAL & UPLOAD PREVIEW
-        const modal = document.getElementById('promptModal');
-        const modalTitle = document.getElementById('modal-title');
-        const finalPromptDiv = document.getElementById('final-prompt');
-        const imageUpload = document.getElementById('image-upload');
-        const imagePreview = document.getElementById('image-preview');
-
-        function openModal(promptData) {
-            modal.style.display = 'flex';
-            modalTitle.innerText = promptData.title;
-            currentPromptTemplate = promptData.basePrompt;
-            
-            // Reset form upload setiap kali modal dibuka
-            imageUpload.value = "";
-            imagePreview.style.display = 'none';
-            imagePreview.src = "";
-
-            updatePrompt(); 
-        }
-
-        function closeModal() {
-            modal.style.display = 'none';
-        }
-
-        // Fitur Preview Gambar
+        // Fitur Preview Gambar User
         function previewImage(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
+                    document.getElementById('display-image').src = e.target.result;
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // 5. GENERATE PROMPT
-        function updatePrompt() {
-            const product = document.getElementById('select-product').value;
-            const camera = document.getElementById('select-camera').value;
-            const lighting = document.getElementById('select-lighting').value;
-            const action = document.getElementById('select-action').value;
-
-            let generatedPrompt = currentPromptTemplate
-                .replace('[PRODUCT]', product)
-                .replace('[CAMERA]', camera)
-                .replace('[LIGHTING]', lighting)
-                .replace('[ACTION]', action);
-
-            finalPromptDiv.innerText = generatedPrompt;
-        }
-
-        // 6. COPY
+        // Fitur Copy
         function copyPrompt() {
-            const textToCopy = finalPromptDiv.innerText;
+            const textToCopy = document.getElementById('final-prompt').innerText;
+            const btn = document.querySelector('.btn-copy');
+            
             navigator.clipboard.writeText(textToCopy).then(() => {
-                const btn = document.querySelector('.btn-copy');
-                const originalText = btn.innerText;
-                btn.innerText = 'Berhasil Dicopy!';
-                btn.style.background = '#a8ffb2';
+                // Animasi sukses
+                btn.classList.add('copied');
+                btn.innerHTML = `✅ Berhasil Dicopy!`;
+                
                 setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.style.background = 'var(--accent)';
+                    btn.classList.remove('copied');
+                    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg> Copy Prompt`;
                 }, 2000);
             });
         }
 
-        window.onclick = function(event) {
-            if (event.target == modal) closeModal();
-        }
+        // Jalankan saat halaman dimuat
+        updatePrompt();
     </script>
 </body>
 </html>
