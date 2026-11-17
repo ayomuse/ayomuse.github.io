@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Muse Video Prompt Library</title>
+    <title>Muse Prompt Library</title>
     <style>
         /* CSS Dasar & Tema Gelap */
         :root {
@@ -20,7 +20,31 @@
             margin: 0;
             padding: 20px;
         }
-        h1 { text-align: center; color: var(--accent); }
+        h1 { text-align: center; color: var(--accent); margin-bottom: 30px;}
+
+        /* Menu Kategori */
+        .category-menu {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .cat-btn {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid #333;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            font-weight: bold;
+        }
         
         /* Galeri Grid */
         .gallery {
@@ -49,15 +73,15 @@
             border-bottom: 2px solid var(--accent);
         }
         .card-content { padding: 15px; }
-        .card-title { font-size: 1.1em; margin: 0 0 10px 0; }
-        .card-category { font-size: 0.8em; color: var(--text-muted); text-transform: uppercase; }
+        .card-title { font-size: 1.1em; margin: 0 0 5px 0; }
+        .card-category { font-size: 0.8em; color: var(--accent); font-weight: bold; text-transform: uppercase; }
 
         /* Modal / Pop-up Pengaturan */
         .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             justify-content: center;
             align-items: center;
             z-index: 1000;
@@ -67,13 +91,13 @@
             padding: 25px;
             border-radius: 12px;
             width: 90%;
-            max-width: 600px;
+            max-width: 650px;
             max-height: 90vh;
             overflow-y: auto;
         }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: var(--accent); font-weight: bold;}
-        .form-group select {
+        .form-group select, .form-group input[type="file"] {
             width: 100%;
             padding: 10px;
             border-radius: 6px;
@@ -81,8 +105,21 @@
             color: white;
             border: 1px solid #444;
             font-size: 1em;
+            box-sizing: border-box;
         }
         
+        /* Preview Upload */
+        .upload-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            height: 150px;
+            border-radius: 6px;
+            border: 1px dashed var(--accent);
+            display: none;
+            object-fit: contain;
+            background: #000;
+        }
+
         /* Hasil Prompt */
         .prompt-result {
             background: #000;
@@ -93,6 +130,7 @@
             color: #a8ffb2;
             margin-top: 15px;
             line-height: 1.5;
+            font-size: 0.95em;
         }
         .btn-group { display: flex; gap: 10px; margin-top: 20px; }
         button {
@@ -111,9 +149,12 @@
 </head>
 <body>
 
-    <h1>Muse Prompt Gallery</h1>
+    <h1>Muse Prompt Library</h1>
     
-    <!-- Galeri akan diisi oleh JavaScript -->
+    <!-- Menu Kategori -->
+    <div class="category-menu" id="category-menu"></div>
+
+    <!-- Galeri -->
     <div class="gallery" id="gallery-container"></div>
 
     <!-- Modal Pengaturan -->
@@ -121,23 +162,33 @@
         <div class="modal-content">
             <h2 id="modal-title">Atur Prompt Anda</h2>
             
+            <!-- UPLOAD GAMBAR -->
+            <div class="form-group" style="background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #444;">
+                <label for="image-upload">📸 Upload Gambar Produk Anda (Hanya Preview):</label>
+                <input type="file" id="image-upload" accept="image/*" onchange="previewImage(event)">
+                <img id="image-preview" class="upload-preview" alt="Preview">
+                <small style="color: var(--text-muted); display: block; margin-top: 5px;">*Gunakan gambar ini sebagai referensi di Muse AI</small>
+            </div>
+
             <div class="form-group">
                 <label for="select-product">Jenis Produk:</label>
                 <select id="select-product" onchange="updatePrompt()">
-                    <option value="tas kulit mewah">Tas Kulit Mewah</option>
-                    <option value="sepatu sneakers modern">Sepatu Sneakers</option>
-                    <option value="jam tangan elegan">Jam Tangan</option>
-                    <option value="botol parfum kaca">Botol Parfum</option>
+                    <option value="a luxury leather bag">Tas Kulit Mewah</option>
+                    <option value="modern sneakers">Sepatu Sneakers</option>
+                    <option value="an elegant watch">Jam Tangan Elegan</option>
+                    <option value="a glass perfume bottle">Botol Parfum</option>
+                    <option value="a tech gadget">Gadget/Teknologi</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="select-camera">Gerakan Kamera:</label>
                 <select id="select-camera" onchange="updatePrompt()">
-                    <option value="slow panning shot">Slow Panning</option>
-                    <option value="360-degree orbit">Orbit 360 Derajat</option>
-                    <option value="fast zoom in">Fast Zoom In</option>
-                    <option value="cinematic dolly track">Cinematic Dolly</option>
+                    <option value="a slow panning shot">Slow Panning</option>
+                    <option value="a 360-degree orbit">Orbit 360 Derajat</option>
+                    <option value="a fast zoom in">Fast Zoom In</option>
+                    <option value="a cinematic dolly track">Cinematic Dolly</option>
+                    <option value="a macro close-up">Macro Close-up</option>
                 </select>
             </div>
 
@@ -157,7 +208,8 @@
                     <option value="floating gracefully in mid-air">Melayang di Udara</option>
                     <option value="rotating slowly on a turntable">Berputar di Atas Meja</option>
                     <option value="water splashing around it">Efek Cipratan Air</option>
-                    <option value="used by a stylish model walking">Digunakan oleh Model</option>
+                    <option value="held by a stylish model">Dipegang oleh Model</option>
+                    <option value="exploding into pieces and reassembling">Efek Explode/Reassemble</option>
                 </select>
             </div>
 
@@ -173,75 +225,133 @@
     </div>
 
     <script>
-        // 1. DATABASE PROMPT (Nanti Anda bisa menambah banyak di sini)
+        // 1. DATABASE PROMPT BERDASARKAN KATEGORI
         const promptsData = [
             {
                 id: 1,
-                title: "Luxury Bag Showcase",
-                category: "Fashion",
-                // Gunakan link gambar asli Anda nanti
+                title: "Luxury Bag Studio Shot",
+                category: "Foto Produk",
                 image: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=600&auto=format&fit=crop", 
-                basePrompt: "A highly detailed video of a [PRODUCT], [ACTION], shot with a [CAMERA] in [LIGHTING]. Ultra-realistic, 8k resolution, Muse AI style."
+                // Prompt dasar yang mengacu pada gambar
+                basePrompt: "Create this image into a high-end commercial video of [PRODUCT], [ACTION]. Shot with [CAMERA] using [LIGHTING]. Ultra-realistic, 8k resolution, fashion campaign style."
             },
             {
                 id: 2,
-                title: "Urban Sneaker Drop",
-                category: "Footwear",
+                title: "Urban Sneaker Unboxing",
+                category: "Unboxing",
                 image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?q=80&w=600&auto=format&fit=crop",
-                basePrompt: "A commercial video of [PRODUCT], [ACTION], [CAMERA], [LIGHTING]. Crisp details, hyper-realistic textures."
+                // Prompt khusus unboxing
+                basePrompt: "Create this image into a POV unboxing video. First-person perspective hands opening a premium box revealing [PRODUCT]. The product is [ACTION], [CAMERA], [LIGHTING]. Crisp details, ASMR aesthetic."
             },
             {
                 id: 3,
-                title: "Elegant Watch Macro",
-                category: "Accessories",
+                title: "Watch Cinematic Macro",
+                category: "Cinematic",
                 image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=600&auto=format&fit=crop",
-                basePrompt: "Macro shot of [PRODUCT], [ACTION], [CAMERA], [LIGHTING]. Shallow depth of field, photorealistic."
+                basePrompt: "Create this image into a cinematic macro video of [PRODUCT]. The subject is [ACTION], captured with [CAMERA] and [LIGHTING]. Shallow depth of field, photorealistic, anamorphic lens flare."
+            },
+            {
+                id: 4,
+                title: "Tech Gadget Dynamic",
+                category: "Foto Produk",
+                image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=600&auto=format&fit=crop",
+                basePrompt: "Create this image into a dynamic tech commercial. [PRODUCT] is [ACTION], shot with [CAMERA] under [LIGHTING]. Futuristic vibe, glowing accents, 4k."
             }
         ];
 
         let currentPromptTemplate = "";
 
-        // 2. RENDER GALERI
+        // 2. LOGIKA FILTER KATEGORI
+        const categoryMenu = document.getElementById('category-menu');
         const galleryContainer = document.getElementById('gallery-container');
         
-        promptsData.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.onclick = () => openModal(item);
-            card.innerHTML = `
-                <img src="${item.image}" alt="${item.title}">
-                <div class="card-content">
-                    <h3 class="card-title">${item.title}</h3>
-                    <span class="card-category">${item.category}</span>
-                </div>
-            `;
-            galleryContainer.appendChild(card);
+        // Ambil semua kategori unik
+        const categories = ["Semua", ...new Set(promptsData.map(p => p.category))];
+        
+        // Render tombol kategori
+        categories.forEach((cat, index) => {
+            const btn = document.createElement('button');
+            btn.className = `cat-btn ${index === 0 ? 'active' : ''}`;
+            btn.innerText = cat;
+            btn.onclick = () => filterGallery(cat, btn);
+            categoryMenu.appendChild(btn);
         });
 
-        // 3. LOGIKA MODAL & GENERATOR PROMPT
+        function filterGallery(category, btnElement) {
+            // Ubah status aktif tombol
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            // Filter data
+            const filteredData = category === "Semua" ? promptsData : promptsData.filter(p => p.category === category);
+            renderGallery(filteredData);
+        }
+
+        // 3. RENDER GALERI
+        function renderGallery(data) {
+            galleryContainer.innerHTML = ''; // Kosongkan galeri dulu
+            data.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => openModal(item);
+                card.innerHTML = `
+                    <img src="${item.image}" alt="${item.title}">
+                    <div class="card-content">
+                        <h3 class="card-title">${item.title}</h3>
+                        <span class="card-category">${item.category}</span>
+                    </div>
+                `;
+                galleryContainer.appendChild(card);
+            });
+        }
+
+        // Render awal (Semua)
+        renderGallery(promptsData);
+
+        // 4. LOGIKA MODAL & UPLOAD PREVIEW
         const modal = document.getElementById('promptModal');
         const modalTitle = document.getElementById('modal-title');
         const finalPromptDiv = document.getElementById('final-prompt');
+        const imageUpload = document.getElementById('image-upload');
+        const imagePreview = document.getElementById('image-preview');
 
         function openModal(promptData) {
             modal.style.display = 'flex';
             modalTitle.innerText = promptData.title;
             currentPromptTemplate = promptData.basePrompt;
-            updatePrompt(); // Langsung generate prompt saat dibuka
+            
+            // Reset form upload setiap kali modal dibuka
+            imageUpload.value = "";
+            imagePreview.style.display = 'none';
+            imagePreview.src = "";
+
+            updatePrompt(); 
         }
 
         function closeModal() {
             modal.style.display = 'none';
         }
 
+        // Fitur Preview Gambar
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 5. GENERATE PROMPT
         function updatePrompt() {
-            // Ambil nilai dari dropdown
             const product = document.getElementById('select-product').value;
             const camera = document.getElementById('select-camera').value;
             const lighting = document.getElementById('select-lighting').value;
             const action = document.getElementById('select-action').value;
 
-            // Ganti placeholder di template dengan pilihan user
             let generatedPrompt = currentPromptTemplate
                 .replace('[PRODUCT]', product)
                 .replace('[CAMERA]', camera)
@@ -251,7 +361,7 @@
             finalPromptDiv.innerText = generatedPrompt;
         }
 
-        // 4. FITUR COPY TEXT
+        // 6. COPY
         function copyPrompt() {
             const textToCopy = finalPromptDiv.innerText;
             navigator.clipboard.writeText(textToCopy).then(() => {
@@ -266,11 +376,8 @@
             });
         }
 
-        // Tutup modal jika klik di luar area modal
         window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
+            if (event.target == modal) closeModal();
         }
     </script>
 </body>
